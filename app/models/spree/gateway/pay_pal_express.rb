@@ -9,6 +9,22 @@ module Spree
     preference :landing_page, :string, default: 'Billing'
     preference :logourl, :string, default: ''
 
+    def credit(amount,transaction_id,originator)
+      response = refund(originator[:originator].payment, (amount / 100.0).to_s)
+
+      def response.authorization
+        self.RefundTransactionID
+      end
+      def response.params
+        {}
+      end
+      def response.message
+        self.Errors.map{ |err| err.LongMessage }.join(' and ')
+      end
+
+      response
+    end
+
     def supports?(source)
       true
     end
